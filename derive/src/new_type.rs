@@ -134,7 +134,7 @@ fn derive_with_options(ident: syn::Ident, options: &Options) -> TokenStream {
 				#[doc = #new_method_link]
 				/// when the input is not a valid
 				#[doc = concat!(#name, ".")]
-				pub struct #error<T = String>(pub T);
+				pub struct #error<T>(pub T);
 
 				impl<T: ::core::fmt::Debug> ::core::fmt::Debug for #error<T> {
 					fn fmt(&self, f: &mut core::fmt::Formatter) -> ::core::fmt::Result {
@@ -205,7 +205,7 @@ fn derive_with_options(ident: syn::Ident, options: &Options) -> TokenStream {
 					/// The input bytes must be a valid
 					#[doc = concat!(#name, ".")]
 					pub const unsafe fn new_unchecked_from_bytes(input: &[u8]) -> &Self {
-						unsafe { std::mem::transmute::<&[u8], &Self>(input) }
+						unsafe { ::core::mem::transmute::<&[u8], &Self>(input) }
 					}
 
 					/// Creates a new
@@ -250,8 +250,8 @@ fn derive_with_options(ident: syn::Ident, options: &Options) -> TokenStream {
 					/// Creates a new
 					#[doc = #name]
 					/// by parsing the input bytes.
-					pub const fn from_bytes(input: &[u8]) -> Result<&Self, ::std::str::Utf8Error> {
-						match ::std::str::from_utf8(input) {
+					pub const fn from_bytes(input: &[u8]) -> Result<&Self, ::core::str::Utf8Error> {
+						match ::core::str::from_utf8(input) {
 							Ok(s) => Ok(unsafe { Self::from_str(s) }),
 							Err(e) => Err(e)
 						}
@@ -261,14 +261,14 @@ fn derive_with_options(ident: syn::Ident, options: &Options) -> TokenStream {
 					#[doc = #name]
 					/// by parsing the input string.
 					pub const fn from_str(input: &str) -> &Self {
-						unsafe { std::mem::transmute::<&str, &Self>(input) }
+						unsafe { ::core::mem::transmute::<&str, &Self>(input) }
 					}
 				}
 
 				impl<'a> TryFrom<&'a [u8]> for &'a #ident {
-					type Error = ::std::str::Utf8Error;
+					type Error = ::core::str::Utf8Error;
 
-					fn try_from(value: &'a[u8]) -> Result<&'a #ident, ::std::str::Utf8Error> {
+					fn try_from(value: &'a[u8]) -> Result<&'a #ident, ::core::str::Utf8Error> {
 						#ident::from_bytes(value)
 					}
 				}
@@ -480,7 +480,7 @@ fn derive_owned_type(
 				/// Creates a new owned
 				#[doc = #name]
 				/// by parsing the input string.
-				pub fn from_string(input: String) -> Result<Self, #error> {
+				pub fn from_string(input: String) -> Result<Self, #error<String>> {
 					Self::new(input)
 				}
 
@@ -513,17 +513,17 @@ fn derive_owned_type(
 			}
 
 			impl TryFrom<String> for #owned_ident {
-				type Error = #error;
+				type Error = #error<String>;
 
-				fn try_from(value: String) -> Result<Self, #error> {
+				fn try_from(value: String) -> Result<Self, #error<String>> {
 					Self::new(value)
 				}
 			}
 
 			impl ::std::str::FromStr for #owned_ident {
-				type Err = #error;
+				type Err = #error<String>;
 
-				fn from_str(value: &str) -> Result<Self, #error> {
+				fn from_str(value: &str) -> Result<Self, #error<String>> {
 					Self::new(value.to_owned())
 				}
 			}

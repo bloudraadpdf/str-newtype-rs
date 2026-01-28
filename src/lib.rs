@@ -49,6 +49,7 @@
 //! And much more. See the the [`StrNewType`] documentation for a full
 //! specification of what items are derived and how it can be controlled with
 //! the `newtype` attribute.
+#![cfg_attr(not(feature = "std"), no_std)]
 pub use str_newtype_derive::StrNewType;
 
 /// Trusted byte buffer type.
@@ -58,6 +59,7 @@ pub use str_newtype_derive::StrNewType;
 /// Any interior mutability in the buffer type must not affect the `as_bytes`
 /// and `into_bytes` methods. In other words, as long as `self` is borrowed
 /// immutably those functions must always return the same result.
+#[cfg(feature = "std")]
 pub unsafe trait Buffer: Sized {
 	/// Borrows the buffer bytes.
 	fn as_bytes(&self) -> &[u8];
@@ -66,6 +68,7 @@ pub unsafe trait Buffer: Sized {
 	fn into_bytes(self) -> Vec<u8>;
 }
 
+#[cfg(feature = "std")]
 unsafe impl Buffer for Vec<u8> {
 	fn as_bytes(&self) -> &[u8] {
 		self
@@ -76,6 +79,7 @@ unsafe impl Buffer for Vec<u8> {
 	}
 }
 
+#[cfg(feature = "std")]
 unsafe impl Buffer for String {
 	fn as_bytes(&self) -> &[u8] {
 		self.as_bytes()
