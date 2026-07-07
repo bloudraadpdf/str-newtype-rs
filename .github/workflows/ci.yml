@@ -4,12 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
-    types:
-      - opened
-      - reopened
-      - synchronize
-      - ready_for_review
+    branches: ["**"]
 
 env:
   CARGO_TERM_COLORS: always
@@ -21,7 +16,7 @@ jobs:
     if: ${{ !github.event.pull_request.draft }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: Extract MSRV
         id: msrv
         run: echo "MSRV=$(cat Cargo.toml | grep -Po '(?<=rust-version = ")([\d\.]+)')" >> $GITHUB_OUTPUT
@@ -39,12 +34,12 @@ jobs:
     if: ${{ !github.event.pull_request.draft }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-      - name: Check formatting
-        run: cargo fmt --all -- --check
       - name: Clippy
         run: cargo clippy --all-features -- -D warnings
+      - name: Check formatting
+        run: cargo fmt --all -- --check
