@@ -724,6 +724,18 @@ fn derive_owned_type(
 			}
 		}
 
+		impl<'a> From<&'a #ident> for ::std::borrow::Cow<'a, #ident> {
+			fn from(value: &'a #ident) -> Self {
+				::std::borrow::Cow::Borrowed(value)
+			}
+		}
+
+		impl<'a> From<#owned_ident> for ::std::borrow::Cow<'a, #ident> {
+			fn from(value: #owned_ident) -> Self {
+				::std::borrow::Cow::Owned(value)
+			}
+		}
+
 		#serialize
 
 		#deserialize
