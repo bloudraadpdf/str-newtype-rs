@@ -63,7 +63,7 @@ the `newtype` attribute.
 
 ## Organisation fork
 
-The `bloudraadpdf` fork uses `thiserror` 2.0.18 in the derive crate.
+The `bloudraadpdf` fork uses `thiserror` 2.0.19 in the derive crate.
 It retains the upstream 3.0 string conversion API.
 Use a full Git revision when you select this fork.
 Run `mise install`, then `just check`, before you publish a change.
